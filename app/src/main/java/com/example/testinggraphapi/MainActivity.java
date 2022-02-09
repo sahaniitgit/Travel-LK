@@ -16,6 +16,7 @@ import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.squareup.picasso.Picasso;
 
 
 import android.content.Intent;
@@ -24,6 +25,7 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Arrays;
@@ -42,6 +44,8 @@ public class MainActivity extends AppCompatActivity {
 
         loginButton=findViewById(R.id.login_button);
         callbackManager = CallbackManager.Factory.create();
+        textView = findViewById(R.id.textView);
+        imageView=findViewById(R.id.iv_profilePic);
 
         loginButton.setPermissions(Arrays.asList("user_gender,user_friends"));
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
@@ -72,6 +76,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCompleted(@Nullable JSONObject jsonObject, @Nullable GraphResponse graphResponse) {
                 Log.d("demo", jsonObject.toString());
+                try {
+                    String name=jsonObject.getString("name");
+                    String id=jsonObject.getString("id");
+                    textView.setText(name);
+                    Picasso.get().load("https://graph.facebook.com/"+id+"/picture?width=9999")
+                    .into(imageView);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
         Bundle bundle = new Bundle();
@@ -85,6 +99,8 @@ public class MainActivity extends AppCompatActivity {
 
         if (currentAccessToken == null){
             LoginManager.getInstance().logOut();
+            textView.setText("");
+            imageView.setImageResource(0);
         }
     }
 
