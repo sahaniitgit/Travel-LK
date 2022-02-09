@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Testing Graph API</string>
+    <string name="facebook_app_id">249309680720703</string>
+    <string name="fb_login_protocol_scheme">fb249309680720703</string>
+    <string name="facebook_client_token">9327f11a016739fca9c2987f1919c498</string>
+
+
+</resources>
