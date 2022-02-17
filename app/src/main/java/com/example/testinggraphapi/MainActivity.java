@@ -9,10 +9,8 @@ import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
-import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
@@ -28,6 +26,7 @@ import android.widget.TextView;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
@@ -36,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
     private LoginButton loginButton;
     private ImageView imageView;
     private TextView textView;
+    public ArrayList<Bundle> Links = new ArrayList<Bundle>();
+    private Bundle bundle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,9 +90,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         Bundle bundle = new Bundle();
-        bundle.putString("fields","gender,name,id,first_name,last_name");
+        Bundle links = new Bundle();
+        bundle.putString("fields","gender,name,id,first_name,last_name,posts{full_picture}");
+
+
+
+
+
         graphRequest.setParameters(bundle);
         graphRequest.executeAsync();
+
     }
     AccessTokenTracker accessTokenTracker = new AccessTokenTracker() {
         @Override
@@ -105,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     };
+
 
     @Override
     protected void onDestroy() {
