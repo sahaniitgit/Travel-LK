@@ -22,12 +22,15 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.FieldPosition;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -54,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
             public void onSuccess(LoginResult loginResult) {
                 Log.d("Demo","Login Succesfull");
             }
+
 
             @Override
             public void onCancel() {
@@ -90,15 +94,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         Bundle bundle = new Bundle();
-        Bundle links = new Bundle();
+        Bundle printbundle = new Bundle();
+
         bundle.putString("fields","gender,name,id,first_name,last_name,posts{full_picture}");
-
-
+        printbundle.putString("class","posts{full_picture}");
 
 
 
         graphRequest.setParameters(bundle);
+
         graphRequest.executeAsync();
+
+        System.out.println("Sout");
 
     }
     AccessTokenTracker accessTokenTracker = new AccessTokenTracker() {
