@@ -32,6 +32,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import okhttp3.Response;
+
 public class MainActivity extends AppCompatActivity {
 
     private CallbackManager callbackManager;
@@ -46,27 +48,27 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        loginButton=findViewById(R.id.login_button);
+        loginButton = findViewById(R.id.login_button);
         callbackManager = CallbackManager.Factory.create();
         textView = findViewById(R.id.textView);
-        imageView=findViewById(R.id.iv_profilePic);
+        imageView = findViewById(R.id.iv_profilePic);
 
         loginButton.setPermissions(Arrays.asList("user_gender,user_friends"));
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                Log.d("Demo","Login Succesfull");
+                Log.d("Demo", "Login Succesfull");
             }
 
 
             @Override
             public void onCancel() {
-                Log.d("Demo","Login Cancelled");
+                Log.d("Demo", "Login Cancelled");
             }
 
             @Override
             public void onError(@NonNull FacebookException e) {
-                Log.d("Demo","Login Error");
+                Log.d("Demo", "Login Error");
             }
         });
 
@@ -81,12 +83,26 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCompleted(@Nullable JSONObject jsonObject, @Nullable GraphResponse graphResponse) {
                 Log.d("demo", jsonObject.toString());
+                List<String> vallist = new ArrayList<>();
+                String[] pics = jsonObject.toString().split("\"posts\":")[1].split(",");
+                for(String pic:pics){
+                    if(pic.contains("full_picture")){
+                        String[] values = pic.split("\"full_picture\":");
+                        if(values.length>1){
+                            String value = values[1].replace("\\","").replace("}","").substring(1);
+                            System.out.println(value);
+                            vallist.add(value);
+                        }
+
+                    }
+                }
+
                 try {
-                    String name=jsonObject.getString("name");
-                    String id=jsonObject.getString("id");
+                    String name = jsonObject.getString("name");
+                    String id = jsonObject.getString("id");
                     textView.setText(name);
-                    Picasso.get().load("https://graph.facebook.com/"+id+"/picture?width=9999")
-                    .into(imageView);
+                    Picasso.get().load("https://graph.facebook.com/" + id + "/picture?width=9999")
+                            .into(imageView);
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -96,10 +112,7 @@ public class MainActivity extends AppCompatActivity {
         Bundle bundle = new Bundle();
         Bundle printbundle = new Bundle();
 
-        bundle.putString("fields","gender,name,id,first_name,last_name,posts{full_picture}");
-        printbundle.putString("class","posts{full_picture}");
-
-
+        bundle.putString("fields", "gender,name,id,first_name,last_name,posts{full_picture}");
 
         graphRequest.setParameters(bundle);
 
@@ -108,16 +121,17 @@ public class MainActivity extends AppCompatActivity {
         System.out.println("Sout");
 
     }
+
     AccessTokenTracker accessTokenTracker = new AccessTokenTracker() {
         @Override
         protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken currentAccessToken) {
 
-        if (currentAccessToken == null){
-            LoginManager.getInstance().logOut();
-            textView.setText("");
-            imageView.setImageResource(0);
+            if (currentAccessToken == null) {
+                LoginManager.getInstance().logOut();
+                textView.setText("");
+                imageView.setImageResource(0);
+            }
         }
-    }
 
     };
 
